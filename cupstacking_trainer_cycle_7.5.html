@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cup Stacking Trainer</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom, #ffefff, #ffe5f1);
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #ff4081;
+      font-size: 2.5rem;
+    }
+
+    video {
+      width: 80%;
+      max-width: 500px;
+      margin: 20px auto;
+      border: 4px solid #ff4081;
+      border-radius: 12px;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      background-color: #ff4081;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #ffb6c1;
+    }
+
+    .info {
+      font-size: 1.2rem;
+      margin: 10px;
+      color: #555;
+    }
+
+    .score-box {
+      font-size: 1.5rem;
+      margin-top: 20px;
+      color: #333;
+    }
+
+    .cartoon {
+      width: 120px;
+      margin-top: 20px;
+    }
+
+    .countdown {
+      font-size: 2rem;
+      color: #ff4081;
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🌟 Cup Stacking Trainer 🌟</h1>
+
+  <div class="countdown" id="countdownDisplay"></div>
+
+  <video id="refVideo" muted playsinline loop>
+    <source src="cycle_7.5.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="info">เป้าหมาย: <strong>7.5</strong> วินาที</div>
+
+  <button id="startBtn">Start</button>
+  <button id="stopBtn" disabled>Stop</button>
+
+  <div class="score-box">
+    ⏱️ เวลา: <span id="timer">0.00</span> วินาที<br />
+    🏆 คะแนน: <span id="score">0</span>
+  </div>
+
+  <img src="girl_stacker.png" alt="Cute Cartoon Kid" class="cartoon">
+
+  <!-- เสียง Ready Set Go! -->
+  <audio id="soundReady" src="ready.mp3"></audio>
+  <audio id="soundSet" src="set.mp3"></audio>
+  <audio id="soundGo" src="go.mp3"></audio>
+
+  <script>
+    let startTime, timerInterval, score = 0;
+    const targetTime = 7.5;
+
+    const timerEl = document.getElementById("timer");
+    const scoreEl = document.getElementById("score");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const countdownDisplay = document.getElementById("countdownDisplay");
+    const video = document.getElementById("refVideo");
+
+    const soundReady = document.getElementById("soundReady");
+    const soundSet = document.getElementById("soundSet");
+    const soundGo = document.getElementById("soundGo");
+
+    startBtn.onclick = () => {
+      startBtn.disabled = true;
+      countdownDisplay.textContent = "Ready";
+      soundReady.currentTime = 0;
+      soundReady.play();
+
+      setTimeout(() => {
+        countdownDisplay.textContent = "Set";
+        soundSet.currentTime = 0;
+        soundSet.play();
+      }, 1000);
+
+      setTimeout(() => {
+        countdownDisplay.textContent = "Go!";
+        soundGo.currentTime = 0;
+        soundGo.play();
+      }, 2000);
+
+      setTimeout(() => {
+        countdownDisplay.textContent = "";
+        video.currentTime = 0;
+        video.play();
+        startTime = Date.now();
+        timerInterval = setInterval(() => {
+          const elapsed = (Date.now() - startTime) / 1000;
+          timerEl.textContent = elapsed.toFixed(2);
+        }, 50);
+        stopBtn.disabled = false;
+      }, 3000);
+    };
+
+    stopBtn.onclick = () => {
+      clearInterval(timerInterval);
+      video.pause();
+      const elapsed = (Date.now() - startTime) / 1000;
+      if (elapsed <= targetTime) {
+        score += 1;
+      }
+      scoreEl.textContent = score;
+      stopBtn.disabled = true;
+      startBtn.disabled = false;
+    };
+  </script>
+</body>
+
+</html>
